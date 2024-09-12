@@ -52,14 +52,19 @@ const App = () => {
     <div className="app-container">
       <div className="content-container">
         <h1 className="app-title">Anki Story Writer</h1>
+        <div className="app-description">This app uses AI to generate a short story that makes use of a random selection of the vocabulary words you're learning with Anki.</div>
         <form onSubmit={handleSubmit} className="form-container">
           <div className="form-group">
-            <label htmlFor="vocab-input">Vocabulary Words</label>
+            <label htmlFor="vocab-input">Deck pasted from an Anki export</label>
             <textarea
               id="vocab-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter vocabulary words (one per line)"
+              placeholder="Export an Anki deck's cards into a text file. You can do this in the desktop version of Anki (not AnkiWeb) by clicking Browse, then (from the menu) Notes -> Export Notes.  Set the export format to 'Notes in Plain Text (.txt)', and uncheck the box that says 'Include HTML and media references'.
+
+That resulting text file should have one card per line, with a tab separating the question and answer.
+
+Then, copy and paste the entire file contents here."
               rows={10}
               className="textarea-input"
             />
