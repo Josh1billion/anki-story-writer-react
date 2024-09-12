@@ -8,6 +8,8 @@ const App = () => {
   const [targetLanguage, setTargetLanguage] = useState(() => localStorage.getItem('targetLanguage') || 'Spanish');
   const [sentenceCount, setSentenceCount] = useState(() => parseInt(localStorage.getItem('sentenceCount')) || 5);
   const [howManyTargetWordsToUse, setHowManyTargetWordsToUse] = useState(() => parseInt(localStorage.getItem('howManyTargetWordsToUse')) || 30);
+  const [useNarrativeDetails, setUseNarrativeDetails] = useState(() => JSON.parse(localStorage.getItem('useNarrativeDetails')) || false);
+  const [narrativeDetails, setNarrativeDetails] = useState(() => localStorage.getItem('narrativeDetails') || '');
   const [llamaUrl, setLlamaUrl] = useState(() => localStorage.getItem('llamaUrl') || 'http://localhost:11434/api/generate');
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,9 @@ const App = () => {
     localStorage.setItem('sentenceCount', sentenceCount.toString());
     localStorage.setItem('howManyTargetWordsToUse', howManyTargetWordsToUse.toString());
     localStorage.setItem('llamaUrl', llamaUrl);
-  }, [input, useChatGPT, apiKey, targetLanguage, sentenceCount, howManyTargetWordsToUse, llamaUrl]);
+    localStorage.setItem('useNarrativeDetails', JSON.stringify(useNarrativeDetails));
+    localStorage.setItem('narrativeDetails', narrativeDetails);
+  }, [input, useChatGPT, apiKey, targetLanguage, sentenceCount, howManyTargetWordsToUse, llamaUrl, useNarrativeDetails, narrativeDetails]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +38,11 @@ const App = () => {
       .sort(() => 0.5 - Math.random())
       .slice(0, howManyTargetWordsToUse);
 
-    const prompt = `Write a short story in ${targetLanguage} consisting of ${sentenceCount} sentences. The story should make use of the following Spanish words/phrases:\n${vocabList.map(word => `${word.wordInTargetLanguage} - ${word.wordInNativeLanguage}`).join('\n')}`;
+    let prompt = `Write a short story in ${targetLanguage} consisting of ${sentenceCount} sentences.\n`;
+    if (useNarrativeDetails) {
+        prompt += `${narrativeDetails}\n`;
+    }
+    prompt += `The story should make use of the following Spanish words/phrases:\n${vocabList.map(word => `${word.wordInTargetLanguage} - ${word.wordInNativeLanguage}`).join('\n')}`;
 
     try {
       const response = useChatGPT
@@ -102,15 +110,19 @@ Then, copy and paste the entire file contents here."
                 className="text-input"
               />
             </div>
-            <div className="form-group checkbox-group">
-              <input
-                id="use-chatgpt"
-                type="checkbox"
-                checked={useChatGPT}
-                onChange={(e) => setUseChatGPT(e.target.checked)}
-                className="checkbox-input"
-              />
+          </div>
+          <div className="form-row">
+            <div className="form-group toggle-group">
               <label htmlFor="use-chatgpt">Use ChatGPT</label>
+              <div className="toggle-switch">
+                <input
+                  id="use-chatgpt"
+                  type="checkbox"
+                  checked={useChatGPT}
+                  onChange={(e) => setUseChatGPT(e.target.checked)}
+                />
+                <label htmlFor="use-chatgpt" className="slider"></label>
+              </div>
             </div>
           </div>
           <div className="form-group">
@@ -123,6 +135,14 @@ Then, copy and paste the entire file contents here."
               placeholder={useChatGPT ? 'Enter OpenAI API Key' : 'Enter Llama3 URL'}
               className="text-input"
             />
+          </div>
+          <div className="form-group">
+            
+            <label htmlFor="useNarrativeDetails">
+              <input type="checkbox" id="useNarrativeDetails" onChange={(e) => setUseNarrativeDetails(e.target.checked)} />&nbsp;
+              Describe the type of story you want
+            </label>
+            {useNarrativeDetails && <input type="text" className="text-input" value={narrativeDetails} onChange={(e) => setNarrativeDetails(e.target.value)} placeholder="Provide details for the AI about what kind of story you want. For example, you can write 'It should be a story about a ninja mouse named Bob.'" />}
           </div>
           <button type="submit" className="submit-button" disabled={isLoading}>
             {isLoading ? 'Generating...' : 'Generate Story'}
