@@ -4,6 +4,10 @@ Given an Anki deck and some options, this app uses AI to generate a short story 
 
 This is a frontend-only, SPA version of my previous CLI tool `anki-story-writer`.
 
+# Website
+
+You can access this app at [https://ankistorywriter.fordesoft.com/](https://ankistorywriter.fordesoft.com/)
+
 # Usage
 Export an Anki deck's cards into a text file. You can do this in the desktop version of Anki (not AnkiWeb) by clicking `Browse`, then (from the menu) Notes -> Export Notes.  Set the export format to `Notes in Plain Text (.txt)`, and uncheck the box that says `Include HTML and media references`.
 
